@@ -37,7 +37,7 @@ if not args.skip_matching:
         --image_path " + args.source_path + "/input \
         --ImageReader.single_camera 1 \
         --ImageReader.camera_model " + args.camera + " \
-        --SiftExtraction.use_gpu " + str(use_gpu)
+        --FeatureExtraction.use_gpu " + str(use_gpu)
     exit_code = os.system(feat_extracton_cmd)
     if exit_code != 0:
         logging.error(f"Feature extraction failed with code {exit_code}. Exiting.")
@@ -46,7 +46,7 @@ if not args.skip_matching:
     ## Feature matching
     feat_matching_cmd = colmap_command + " exhaustive_matcher \
         --database_path " + args.source_path + "/distorted/database.db \
-        --SiftMatching.use_gpu " + str(use_gpu)
+        --FeatureMatching.use_gpu " + str(use_gpu)
     exit_code = os.system(feat_matching_cmd)
     if exit_code != 0:
         logging.error(f"Feature matching failed with code {exit_code}. Exiting.")
@@ -63,6 +63,21 @@ if not args.skip_matching:
     exit_code = os.system(mapper_cmd)
     if exit_code != 0:
         logging.error(f"Mapper failed with code {exit_code}. Exiting.")
+        exit(exit_code)
+    
+    ### Coordinate transform
+    # We want to match this to the world coordinates used
+    # to generate the data so we can have sensible units
+    aligner_cmd = (colmap_command + " model_aligner \
+        --input_path " + args.source_path + "/distorted/sparse/0 \
+        --output_path " + args.source_path + "/distorted/sparse/0 \
+        --ref_images_path " + args.source_path + "/input/cameras_unreal.txt \
+        --alignment_type custom \
+        --ref_is_gps 0 \
+        --alignment_max_error 0.1")
+    exit_code = os.system(aligner_cmd)
+    if exit_code != 0:
+        logging.error(f"Engine alignment failed with code {exit_code}. Exiting.")
         exit(exit_code)
 
 ### Image undistortion
