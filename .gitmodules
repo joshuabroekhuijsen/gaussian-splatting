@@ -4,11 +4,11 @@
 [submodule "submodules/diff-gaussian-rasterization"]
 	path = submodules/diff-gaussian-rasterization
 	url = https://github.com/joshuabroekhuijsen/diff-gaussian-rasterization.git
-	branch = sh_degree
+	branch = main
 [submodule "SIBR_viewers"]
 	path = SIBR_viewers
 	url = https://github.com/joshuabroekhuijsen/SIBR_viewers.git
-	branch = sh_degree
+	branch = jb_shDegree
 [submodule "submodules/fused-ssim"]
 	path = submodules/fused-ssim
 	url = https://github.com/rahul-goel/fused-ssim.git
